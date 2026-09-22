@@ -118,4 +118,4 @@ New input plus output totals **139,923 tokens**. The recorded **2,665 reasoning-
 
 The final cumulative `total_token_usage` from each session was checked against the sum of `token_usage_record.payload.usage`, deduplicated by response ID. The two methods agree. Recorded input includes cache reads, so new input is input minus cached input. Turn durations come from `task_complete` and `turn_aborted` events; idle gaps are excluded.
 
-The old README's 81,872-token line was supplied during a later documentation request and is superseded by this complete breakdown. This audit, screenshot capture, repository publishing and the separate session that repaired the Bonsai-related desktop audio incident are excluded. Raw logs, personal paths and session identifiers are not published.
+The old README's 81,872-token line was supplied during a later documentation request and is superseded by this complete breakdown. This audit, screenshot capture, repository publishing and the separate session that repaired the bonsai2 Q2-related desktop audio incident are excluded. Raw logs, personal paths and session identifiers are not published.

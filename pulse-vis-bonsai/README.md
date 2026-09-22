@@ -1,6 +1,8 @@
-# Bonsai Q2 PulseAudio visualizer attempt
+# bonsai2 Q2 PulseAudio visualizer attempt
 
-**Status: incomplete.** This Rust TUI visualizer was the main subject of a three-model coding experiment. Bonsai Q2 produced a buildable prototype, but did not meaningfully finish working playback capture or application filtering. The source is preserved as the experimental result.
+The model tested here is **Ternary Bonsai 2 27B** in `PQ2_0` quantization, referred to below as **bonsai2 Q2**. See the [official PrismML documentation](https://docs.prismml.com/bonsai-2-27b) and [GGUF model repository on Hugging Face](https://huggingface.co/prism-ml/Ternary-Bonsai-2-27B-gguf).
+
+**Status: incomplete.** This Rust TUI visualizer was the main subject of a three-model coding experiment. bonsai2 Q2 produced a buildable prototype, but did not meaningfully finish working playback capture or application filtering. The source is preserved as the experimental result.
 
 See the [three-version comparison](../README.md) for the GPT and Claude implementations and the overall assessment.
 
@@ -14,7 +16,7 @@ The earlier README said the project was completed in 5h 12m 22s. That was the in
 
 ## Development accounting
 
-The audit located **four project-related Bonsai sessions**, including two short aborted starts. Two sessions contain token usage records. Unrelated setup checks and other tasks in the same Codex data directory are excluded.
+The audit located **four project-related bonsai2 Q2 sessions**, including two short aborted starts. Two sessions contain token usage records. Unrelated setup checks and other tasks in the same Codex data directory are excluded.
 
 | Project session, in chronological order | Active turn duration | Input including cache | Cached input, already included | Output | Total including cache |
 | --- | ---: | ---: | ---: | ---: | ---: |
@@ -38,7 +40,7 @@ The calendar span from the first project turn to the final recorded interruption
 
 ### How the totals were calculated
 
-1. Select sessions by their project requests and continuation context, not merely by their working directory. Bonsai used a separate local Codex data store.
+1. Select sessions by their project requests and continuation context, not merely by their working directory. bonsai2 Q2 used a separate local Codex data store.
 2. Take the last non-null `event_msg.token_count.info.total_token_usage` from each session with usage data. The cumulative counters in those sessions do not reset.
 3. Cross-check against the sum of `token_usage_record.payload.usage`, deduplicated by response ID. Both methods produce the same session totals. Do not sum successive cumulative snapshots or add the two record formats together.
 4. In these records, `input_tokens` includes `cached_input_tokens`. Calculate uncached input by subtraction; calculate the cache-inclusive total as input plus output. Cache writes and separately classified reasoning-output tokens are recorded as zero; that does not prove the model performed no reasoning.
@@ -50,7 +52,7 @@ The former README's `1,772,941` total, `1,461,214` input, `38,576,443` cached in
 
 ### Separate recovery and advice session
 
-The session supplied as the final reference was found in the regular Codex data store. Its recorded model is **`gpt-6-astra` with high reasoning**, not Bonsai. It repaired the desktop audio endpoint and supplied debugging advice.
+The session supplied as the final reference was found in the regular Codex data store. Its recorded model is **`gpt-6-astra` with high reasoning**, not bonsai2 Q2. It repaired the desktop audio endpoint and supplied debugging advice.
 
 | Recovery-session measure | Recorded amount |
 | --- | ---: |
@@ -61,11 +63,11 @@ The session supplied as the final reference was found in the regular Codex data 
 | Cached input | 263,808 |
 | Total including cached input | 309,087 |
 
-This is additional recovery/advice work associated with the failed attempt. It is excluded from Bonsai's usage and from the independently developed GPT visualizer's usage. It restored the audio service, not this program.
+This is additional recovery/advice work associated with the failed attempt. It is excluded from bonsai2 Q2's usage and from the independently developed GPT visualizer's usage. It restored the audio service, not this program.
 
 ### Local setup recorded for the experiment
 
-The project turns identify the `bonsai-local` provider and model alias `bonsai2`, using Codex CLI 0.155.1. The local Q2 launch script and retained server log identify **Bonsai 2 27B, `PQ2_0` quantization**, served through a CUDA build of llama.cpp. The local GPU, checked with `nvidia-smi`, is an **NVIDIA GeForce RTX 4060 Ti with 16 GB VRAM** (16,380 MiB reported).
+The project turns identify the `bonsai-local` provider and model alias `bonsai2`, using Codex CLI 0.155.1. The local Q2 launch script and retained server log identify **bonsai2 Q2, `PQ2_0` quantization**, served through a CUDA build of llama.cpp. The local GPU, checked with `nvidia-smi`, is an **NVIDIA GeForce RTX 4060 Ti with 16 GB VRAM** (16,380 MiB reported).
 
 | Context / launch setting | Evidence |
 | --- | --- |
@@ -118,11 +120,11 @@ There are also configuration inconsistencies: the former lowercase palette examp
 
 ### What happened during debugging
 
-Bonsai repeatedly investigated environment and server failures without establishing a correct minimal client. Its shim comments assert a libpulse bug, but the invalid mainloop cast and incomplete connection sequence remain in the saved source. That assertion is not a verified root cause.
+bonsai2 Q2 repeatedly investigated environment and server failures without establishing a correct minimal client. Its shim comments assert a libpulse bug, but the invalid mainloop cast and incomplete connection sequence remain in the saved source. That assertion is not a verified root cause.
 
 The repair session records attempts to stop/restart the desktop audio service, remove the live PulseAudio socket path, and create an ordinary file at the same path using `touch`. The separate recovery session subsequently found a zero-byte regular file where the Unix socket should have been. Connectivity was restored by repairing the endpoint and restarting the relevant service and socket unit.
 
-After recovery, fresh `pactl info` processes connected successfully. Bonsai nevertheless continued pursuing server-side explanations and ad hoc handshake probes. Detailed corrective information was supplied, but the saved client still contains the fundamental API mistakes. Multiple requests for an explanation of the experimental shim variants also did not receive a timely direct answer.
+After recovery, fresh `pactl info` processes connected successfully. bonsai2 Q2 nevertheless continued pursuing server-side explanations and ad hoc handshake probes. Detailed corrective information was supplied, but the saved client still contains the fundamental API mistakes. Multiple requests for an explanation of the experimental shim variants also did not receive a timely direct answer.
 
 The central failure was the combination of incomplete API understanding, weak end-to-end validation, unsupported diagnosis, and changes to the live environment while debugging a broken client. The initial build and FFT successes were real but insufficient for the task's acceptance criteria.
 

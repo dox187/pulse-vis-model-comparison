@@ -1,10 +1,12 @@
 # Pulse visualizer model comparison
 
-Three implementations of the same Rust terminal audio visualizer task, created to compare coding models, with **Bonsai Q2 as the primary subject of the experiment**.
+Three implementations of the same Rust terminal audio visualizer task, created to compare coding models, with **Ternary Bonsai 2 27B as the primary subject of the experiment**.
+
+The local model was tested using the `PQ2_0` quantization. Throughout this comparison, we refer to this model and quantization as **bonsai2 Q2**. Model references: [official PrismML documentation](https://docs.prismml.com/bonsai-2-27b) and [GGUF model repository on Hugging Face](https://huggingface.co/prism-ml/Ternary-Bonsai-2-27B-gguf).
 
 The requested application had to capture PulseAudio-compatible playback, provide familiar visualization modes, configure colors, sensitivity and quality, and show either the complete output or selected applications. A working audio path and application filtering were essential acceptance criteria. The [original application prompt](PROMPT.md) is preserved verbatim apart from line wrapping.
 
-**Outcome:** Bonsai produced a substantial prototype but did not meaningfully complete the application. Its final source still contains blocking capture and FFI defects after more than ten hours of recorded active turns. GPT and Claude produced more complete implementations with broader validation evidence. This is a comparison of these particular runs and saved artifacts, not a general model leaderboard.
+**Outcome:** bonsai2 Q2 produced a substantial prototype but did not meaningfully complete the application. Its final source still contains blocking capture and FFI defects after more than ten hours of recorded active turns. GPT and Claude produced more complete implementations with broader validation evidence. This is a comparison of these particular runs and saved artifacts, not a general model leaderboard.
 
 ## Screenshots of the running applications
 
@@ -34,9 +36,9 @@ Capture details: 144 columns by 40 rows, a private tmux server, and PNG renderin
 
 ## Versions
 
-| | [Bonsai](pulse-vis-bonsai/README.md) | [GPT](pulse-vis-gpt/README.md) | [Claude](pulse-vis-claude/README.md) |
+| | [bonsai2 Q2](pulse-vis-bonsai/README.md) | [GPT](pulse-vis-gpt/README.md) | [Claude](pulse-vis-claude/README.md) |
 | --- | --- | --- | --- |
-| Model recorded for the run | Bonsai 2 27B, Q2 / `PQ2_0` | `gpt-6-astra`, high reasoning | Claude Fable 5.1, xhigh reasoning |
+| Model recorded for the run | bonsai2 Q2 (`PQ2_0`) | `gpt-6-astra`, high reasoning | Claude Fable 5.1, xhigh reasoning |
 | Agent setup | Codex CLI with a local llama.cpp provider | Codex | Claude Code |
 | Result | Incomplete prototype; core capture requirements unmet | Six-mode implementation with repeatable integration scripts | Seven-mode implementation with extensive configuration |
 | Capture design | Custom C shim and handwritten Rust FFI | Supervised `pactl` / `parec` subprocesses | `libpulse-binding` on a dedicated capture thread |
@@ -51,7 +53,7 @@ GPT's combined captures are not sample-synchronized; mirrored outputs can be cou
 
 ## Time and tokens
 
-| Measure | Bonsai Q2 | GPT / Codex | Claude Fable 5.1 |
+| Measure | bonsai2 Q2 | GPT / Codex | Claude Fable 5.1 |
 | --- | ---: | ---: | ---: |
 | Initial implementation turn | 5h 12m 22.594s; incomplete | **13m 28.064s** | **41m 43.046s** |
 | Recorded active turn time, including project follow-ups | **10h 05m 03.351s** | **14m 10.390s** | **41m 59.079s** |
@@ -66,18 +68,18 @@ All three sets of figures now come from the original local session records. Tota
 
 For Codex, new input is recorded input minus cached input; cumulative usage is cross-checked against unique response records. Claude uses the final saved per-model `cost-state` counters. Its cache creation is separate from ordinary input, so **1,160 ordinary input + 549,636 cache-creation tokens = 550,796 new input tokens**. This normalization makes the totals additive without counting cache writes twice. Claude's session also records **1,027 auxiliary-model tokens** (1,010 input and 17 output), excluded from the Fable column; all models combined total **7,053,676**. The saved Claude counters and transcript-message-only sums differ, as documented in its [accounting method](pulse-vis-claude/README.md#accounting-method).
 
-Times use recorded turn durations, including failed/interrupted turns where present, rather than gaps between user messages or a rounded README claim. See the [GPT session breakdown](pulse-vis-gpt/README.md#verified-development-record), [Claude development record](pulse-vis-claude/README.md#development-record), and [Bonsai accounting](pulse-vis-bonsai/README.md#development-accounting). These are exact recorded counts and durations, not estimates or independently verified provider invoices. They are not a price, energy, throughput, or hardware-normalized comparison.
+Times use recorded turn durations, including failed/interrupted turns where present, rather than gaps between user messages or a rounded README claim. See the [GPT session breakdown](pulse-vis-gpt/README.md#verified-development-record), [Claude development record](pulse-vis-claude/README.md#development-record), and [bonsai2 Q2 accounting](pulse-vis-bonsai/README.md#development-accounting). These are exact recorded counts and durations, not estimates or independently verified provider invoices. They are not a price, energy, throughput, or hardware-normalized comparison.
 
-Bonsai's active time includes tool execution, waiting within turns, failed turns and interrupted turns. The calendar span was **15h 51m 40.128s**, including gaps between turns. The earlier **5h 12m 22s** README statement described only the initial attempt and incorrectly framed it as successful completion. See the [Bonsai accounting methodology](pulse-vis-bonsai/README.md#development-accounting) for the session breakdown and limitations.
+bonsai2 Q2's active time includes tool execution, waiting within turns, failed turns and interrupted turns. The calendar span was **15h 51m 40.128s**, including gaps between turns. The earlier **5h 12m 22s** README statement described only the initial attempt and incorrectly framed it as successful completion. See the [bonsai2 Q2 accounting methodology](pulse-vis-bonsai/README.md#development-accounting) for the session breakdown and limitations.
 
-A separate GPT recovery/advice session restored desktop audio and supplied corrective debugging information. It consumed **2m 00.846s active time**, **45,279 uncached-input-plus-output tokens**, and **263,808 cached input tokens**. It is excluded from both Bonsai's model usage and the GPT implementation figures above. It repaired the environment, not the Bonsai application.
+A separate GPT recovery/advice session restored desktop audio and supplied corrective debugging information. It consumed **2m 00.846s active time**, **45,279 uncached-input-plus-output tokens**, and **263,808 cached input tokens**. It is excluded from both bonsai2 Q2's model usage and the GPT implementation figures above. It repaired the environment, not the bonsai2 Q2 application.
 
-## Bonsai Q2 hardware, context and speed
+## bonsai2 Q2 hardware, context and speed
 
 | Local setup / measurement | Observed value |
 | --- | --- |
 | GPU | **NVIDIA GeForce RTX 4060 Ti, 16 GB VRAM** (16,380 MiB reported by `nvidia-smi`) |
-| Model | Bonsai 2 27B, `PQ2_0` / Q2 quantization, served by llama.cpp with CUDA |
+| Model | bonsai2 Q2, `PQ2_0` / Q2 quantization, served by llama.cpp with CUDA |
 | Server context at the retained Q2 startup | **77,824 tokens**, one request slot |
 | Codex-reported effective context | **73,932 tokens** at the start of the project and in the final continuation; briefly **89,497** during an intervening restart/continuation |
 | Prompt processing (input / “read”) | **326 tokens/s median**; middle 80% of requests: **208-490 tokens/s** |
@@ -85,9 +87,9 @@ A separate GPT recovery/advice session restored desktop audio and supplied corre
 
 Q2 does not start with one fixed context size in this setup. The launch script selects it from free GPU memory, reserving 2 GiB for the desktop and additional headroom, and rounds it down to a multiple of 4,096 tokens. `BONSAI_CTX` can override that choice. The launcher requests GPU offload and enables Flash Attention. The server's context allocation and Codex's reported effective budget are separate measurements.
 
-Speeds come from **303 completed responses in the final Bonsai project continuation**, matched to the retained server timing log. They are per-request medians, not the best observed speeds or a benchmark of the entire project history. Prompt processing measures newly evaluated input; reusing cached context is not equivalent to reading all cached tokens again. See the [detailed measurement method](pulse-vis-bonsai/README.md#measured-prompt-and-generation-speed).
+Speeds come from **303 completed responses in the final bonsai2 Q2 project continuation**, matched to the retained server timing log. They are per-request medians, not the best observed speeds or a benchmark of the entire project history. Prompt processing measures newly evaluated input; reusing cached context is not equivalent to reading all cached tokens again. See the [detailed measurement method](pulse-vis-bonsai/README.md#measured-prompt-and-generation-speed).
 
-## What went wrong with Bonsai
+## What went wrong with bonsai2 Q2
 
 ### The core audio path was never completed
 
@@ -101,17 +103,17 @@ The sample-read wrapper also misuses `pa_stream_peek()`: the API returns a point
 
 The sessions show repeated shim experiments, environment inspection and unsupported explanations about libpulse or PipeWire failures. A raw socket probe sent one byte as a supposed handshake; its timeout was then used as evidence against the server. Successful fresh `pactl info` connections contradicted the claim that the server could not accept new clients.
 
-Instead of first correcting and validating a minimal client, Bonsai restarted and stopped the live desktop audio service, removed its socket path, and later used `touch` at that path. The separate recovery session observed a zero-byte regular file where a Unix socket should have been and restored connectivity. This was a concrete operational failure with repair work outside the application task.
+Instead of first correcting and validating a minimal client, bonsai2 Q2 restarted and stopped the live desktop audio service, removed its socket path, and later used `touch` at that path. The separate recovery session observed a zero-byte regular file where a Unix socket should have been and restored connectivity. This was a concrete operational failure with repair work outside the application task.
 
 The user subsequently supplied specific corrections about asynchronous initialization, the invalid empty server argument, the handshake, and the need to inspect the mainloop API pointer. The saved project still retains the mainloop cast and connection defects. Further experiments continued without producing a verified capture path, and repeated requests to explain the shim experiments were not promptly answered.
 
 ### Feature claims exceeded verification
 
-Bonsai declared completion after builds, `--help`, a clean non-TTY exit and three FFT tests, while acknowledging that it had not tested live audio. A later user run reported `SIGSEGV`. The original README nevertheless described functioning application filtering and visualization.
+bonsai2 Q2 declared completion after builds, `--help`, a clean non-TTY exit and three FFT tests, while acknowledging that it had not tested live audio. A later user run reported `SIGSEGV`. The original README nevertheless described functioning application filtering and visualization.
 
 Other source-level gaps reinforce the mismatch: renderer rows append glyphs without preserving their horizontal positions, the color escape is reset before the glyph, the FPS setting is used as a millisecond interval, and the spectrum fixes its FFT size at 256 despite the documented quality control. Lowercase palette examples do not match the serialized enum names, and invalid configuration silently falls back to defaults. More generated code and more debugging time did not translate into completion of the acceptance criteria.
 
-## What this run suggests about Bonsai Q2
+## What this run suggests about bonsai2 Q2
 
 **Demonstrated strengths:** it generated a modular Rust project, connected a C build step, wrote configuration and command-line scaffolding, implemented several visualization branches, and eventually corrected a small FFT implementation sufficiently to pass its three synthetic tests. It could use shell tools and respond to some compiler/test feedback.
 
@@ -121,7 +123,7 @@ A reasonable use suggested by this evidence is **small, bounded implementation w
 
 This run does **not** support relying on this setup for unattended systems integration, unsafe FFI work, live service repair, or long tasks where the agent must define and verify its own success criteria. A compiling prototype and a polished README were particularly poor proxies for a working application here.
 
-The experiment does not isolate whether quantization, the base model, context management, prompts, the local serving setup, or their interaction caused the failures. There was no matched higher-precision Bonsai control or repeated-trial study. The conclusion applies to the tested **Bonsai Q2 agent setup and this task**.
+The experiment does not isolate whether quantization, the base model, context management, prompts, the local serving setup, or their interaction caused the failures. There was no matched control using a higher-precision version of this model or repeated-trial study. The conclusion applies to the tested **bonsai2 Q2 agent setup and this task**.
 
 ## Evidence and repository scope
 
