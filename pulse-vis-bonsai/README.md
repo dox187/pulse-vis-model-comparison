@@ -65,7 +65,39 @@ This is additional recovery/advice work associated with the failed attempt. It i
 
 ### Local setup recorded for the experiment
 
-The project turns identify the `bonsai-local` provider and model alias `bonsai2`, using Codex CLI 0.155.1. The local Q2 launch script identifies **Bonsai 2 27B, `PQ2_0` quantization**, served through llama.cpp. Context limits changed during the run; the records do not describe one fixed context setting throughout. The Q2 attribution is supported by the experiment's recorded description and launch setup; the session model alias alone does not encode quantization.
+The project turns identify the `bonsai-local` provider and model alias `bonsai2`, using Codex CLI 0.155.1. The local Q2 launch script and retained server log identify **Bonsai 2 27B, `PQ2_0` quantization**, served through a CUDA build of llama.cpp. The local GPU, checked with `nvidia-smi`, is an **NVIDIA GeForce RTX 4060 Ti with 16 GB VRAM** (16,380 MiB reported).
+
+| Context / launch setting | Evidence |
+| --- | --- |
+| Q2 server context at the retained startup | **77,824 tokens** (`n_ctx_slot`), with one request slot |
+| Codex effective budget at the initial project turn | **73,932 tokens**, recorded in the turn event |
+| Brief intermediate continuation | **89,497 tokens**, recorded in a later turn event |
+| Final project continuation | **73,932 tokens**, recorded in the turn event |
+| Context selection | Automatic from free VRAM by default; explicit override through `BONSAI_CTX` |
+| GPU execution settings requested by the launcher | `-ngl 99`, Flash Attention enabled, `--parallel 1` |
+
+The launcher estimates the available context after accounting for model file size, a default **2,048 MiB desktop reserve**, 400 MiB of additional overhead and a 10% margin. It rounds the result down to a multiple of **4,096 tokens**, with an 8,192-token floor and a 262,144-token cap. If GPU-memory detection is unavailable or automatic layer placement is selected, the automatic context fallback is 32,768. These are launch-script choices, not a guarantee that every context size fits every GPU.
+
+The Codex launcher reads the server's per-slot context and passes it to the client; the turn events record a smaller effective budget for the usual 77,824-token allocation. The server allocation and the effective client budget should not be conflated. Since free VRAM and settings changed, the experiment cannot be described as using a fixed context throughout. The retained server log directly confirms the 77,824-token Q2 startup; it does not preserve every earlier server startup.
+
+### Measured prompt and generation speed
+
+The retained Q2 server log contains final prompt/evaluation timing summaries for the last project continuation. Its **303 project response generation counts match the Codex response output counts in order**. Their prompt-token sum also matches that session's uncached input exactly. Seven additional short server responses are excluded from this project sample.
+
+| Throughput measure | Prompt processing: input / “read” | Generation: output / “write” |
+| --- | ---: | ---: |
+| Matched completed responses | 303 | 303 |
+| Tokens represented | 377,780 newly evaluated input tokens | 72,571 generated tokens |
+| Median per-request rate | **325.98 tokens/s** | **18.98 tokens/s** |
+| 10th-90th percentile | 208.42-489.56 tokens/s | 16.67-22.63 tokens/s |
+| Observed minimum-maximum | 138.95-741.61 tokens/s | 13.49-26.16 tokens/s |
+| Sum of reported evaluation time | 857.867 seconds | 3,895.832 seconds |
+
+Method: parse each request's final `prompt eval time` and `eval time` summary, associate the pair by server task ID, retain the responses matched to the project continuation, and calculate medians and percentiles from the server-reported tokens-per-second values. Intermediate progress lines and unfinished generations are excluded. Percentiles use Python's `statistics.quantiles(..., n=10)` default method. The source logs remain private.
+
+“Read” here means prompt evaluation/prefill and “write” means autoregressive generation; neither is disk throughput. Cached input is already present in the model's context and is not all processed again. The **12,556,452 cached input tokens** in this continuation must therefore not be divided by prompt-evaluation time to claim an inflated input rate.
+
+These are observed workload speeds on this local setup, not a fresh synthetic benchmark. They vary with context occupancy, prompt length and caching. The retained timing log covers the final continuation, so these rates are not asserted for every earlier session. Evaluation time also excludes tool execution, user pauses and other agent overhead; it is not the same as the project's active turn time.
 
 No raw conversations, private filesystem paths, machine identifiers or session IDs are included here.
 

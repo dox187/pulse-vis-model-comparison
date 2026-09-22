@@ -67,6 +67,21 @@ Bonsai's active time includes tool execution, waiting within turns, failed turns
 
 A separate GPT recovery/advice session restored desktop audio and supplied corrective debugging information. It consumed **2m 00.846s active time**, **45,279 uncached-input-plus-output tokens**, and **263,808 cached input tokens**. It is excluded from both Bonsai's model usage and the GPT implementation figures above. It repaired the environment, not the Bonsai application.
 
+## Bonsai Q2 hardware, context and speed
+
+| Local setup / measurement | Observed value |
+| --- | --- |
+| GPU | **NVIDIA GeForce RTX 4060 Ti, 16 GB VRAM** (16,380 MiB reported by `nvidia-smi`) |
+| Model | Bonsai 2 27B, `PQ2_0` / Q2 quantization, served by llama.cpp with CUDA |
+| Server context at the retained Q2 startup | **77,824 tokens**, one request slot |
+| Codex-reported effective context | **73,932 tokens** at the start of the project and in the final continuation; briefly **89,497** during an intervening restart/continuation |
+| Prompt processing (input / “read”) | **326 tokens/s median**; middle 80% of requests: **208-490 tokens/s** |
+| Generation (output / “write”) | **19.0 tokens/s median**; middle 80% of requests: **16.7-22.6 tokens/s** |
+
+Q2 does not start with one fixed context size in this setup. The launch script selects it from free GPU memory, reserving 2 GiB for the desktop and additional headroom, and rounds it down to a multiple of 4,096 tokens. `BONSAI_CTX` can override that choice. The launcher requests GPU offload and enables Flash Attention. The server's context allocation and Codex's reported effective budget are separate measurements.
+
+Speeds come from **303 completed responses in the final Bonsai project continuation**, matched to the retained server timing log. They are per-request medians, not the best observed speeds or a benchmark of the entire project history. Prompt processing measures newly evaluated input; reusing cached context is not equivalent to reading all cached tokens again. See the [detailed measurement method](pulse-vis-bonsai/README.md#measured-prompt-and-generation-speed).
+
 ## What went wrong with Bonsai
 
 ### The core audio path was never completed
