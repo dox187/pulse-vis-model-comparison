@@ -169,17 +169,40 @@ placement, ring buffer, target parsing, bar layout, colour handling).
 
 ## Development record
 
-This program was written by **Claude Fable 5.1 (xhigh reasoning effort)** running in Claude Code,
-from the initial prompt to the verified release build, in one session.
+The original session identifies **Claude Fable 5.1 with xhigh reasoning effort**, running in Claude Code 2.1.278. The [original application prompt](../PROMPT.md) was recovered from this log.
 
-| | |
-| --- | --- |
-| Prompt submitted | 2026-09-22 01:11 CEST |
-| Finished | 2026-09-22 01:52 CEST |
-| Elapsed | **41 minutes** |
-| Token usage | `claude-fable-5-1: 1.0k input, 197.6k output, 5.7m cache read, 289.4k cache write` |
+| Recorded turn | Duration |
+| --- | ---: |
+| Initial application implementation and verification | **41m 43.046s** |
+| Later README token-usage update | 16.033s |
+| **Recorded active turn total** | **41m 59.079s** |
 
-The time covers design, implementation of all modules, unit tests, and end-to-end testing
-in tmux against a live PipeWire server (a test tone played into a temporary null sink,
-per-application capture, source switching, application restart, terminal resizing down to
-2×1 cells, and CPU measurements of the release build).
+The initial prompt was recorded at 2026-09-21 23:11:35.775 UTC, and its completion-duration event at 23:53:18.795 UTC. Durations above use the explicit `turn_duration.durationMs` counters. They replace the former rounded 41-minute claim and exclude the overnight gap before the README follow-up. Background activity without a turn-duration record is not assigned an invented duration.
+
+The initial turn includes design, implementation, unit tests and live checks against a temporary audio sink, per-application capture, source switching, application restart, small terminal sizes and release-build CPU measurements.
+
+### Verified session token counters
+
+The final saved `cost-state.modelUsage` reports these exact counts for `claude-fable-5-1`, including the later documentation update:
+
+| Token category | Recorded count |
+| --- | ---: |
+| Ordinary input, excluding cache reads and creation | 1,160 |
+| Cache-creation input | 549,636 |
+| **New input, including cache creation** | **550,796** |
+| Cache-read input | 6,303,779 |
+| Output | 198,074 |
+| **New input + output** | **748,870** |
+| **Total including cache reads and creation** | **7,052,649** |
+
+The **97,683 thinking tokens** are already included in output. The same saved session counters record auxiliary model `claude-haiku-4-5-20251001`: **1,010 input + 17 output = 1,027 tokens**, with no cache reads or creation. The log does not fully attribute that auxiliary work to a particular action. The **all-model session total is 7,053,676 tokens**; the main comparison table keeps auxiliary usage separate from Fable.
+
+### Accounting method
+
+Use the final saved `cost-state` snapshot once. The two saved snapshots repeat the same per-model usage counters and must not be added together. Claude's `inputTokens`, `cacheReadInputTokens` and `cacheCreationInputTokens` are separate categories. For comparison with Codex, new input is ordinary input plus cache creation; total usage adds new input, cache reads and output.
+
+The transcript contains 112 assistant entries but only 34 unique message IDs: multiple content blocks repeat usage for the same response. Deduplicating by message ID yields **968 ordinary input, 548,647 cache-creation input, 5,734,918 cache-read input and 197,908 output tokens**. Those message-only sums are lower than the saved session counters by **192 input, 989 cache-creation, 568,861 cache-read and 166 output tokens**. The available log does not fully attribute this difference, so the saved session totals are reported explicitly rather than pretending the two sources match or adding them together.
+
+For the initial implementation alone, the 32 unique transcript messages contain **934 ordinary input, 288,525 cache-creation input, 5,425,200 cache-read input and 197,532 output tokens**. These are message-only counts, not a reconstructed initial `cost-state` snapshot; the later final counters are used for the complete project-session comparison.
+
+The former rounded, user-supplied token line is superseded by these recorded values. This comparison audit, screenshot work and publishing are excluded. Raw logs, personal paths and session identifiers are not published.

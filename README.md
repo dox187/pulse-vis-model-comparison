@@ -2,7 +2,7 @@
 
 Three implementations of the same Rust terminal audio visualizer task, created to compare coding models, with **Bonsai Q2 as the primary subject of the experiment**.
 
-The requested application had to capture PulseAudio-compatible playback, provide familiar visualization modes, configure colors, sensitivity and quality, and show either the complete output or selected applications. A working audio path and application filtering were essential acceptance criteria.
+The requested application had to capture PulseAudio-compatible playback, provide familiar visualization modes, configure colors, sensitivity and quality, and show either the complete output or selected applications. A working audio path and application filtering were essential acceptance criteria. The [original application prompt](PROMPT.md) is preserved verbatim apart from line wrapping.
 
 **Outcome:** Bonsai produced a substantial prototype but did not meaningfully complete the application. Its final source still contains blocking capture and FFI defects after more than ten hours of recorded active turns. GPT and Claude produced more complete implementations with broader validation evidence. This is a comparison of these particular runs and saved artifacts, not a general model leaderboard.
 
@@ -51,17 +51,22 @@ GPT's combined captures are not sample-synchronized; mirrored outputs can be cou
 
 ## Time and tokens
 
-| Measure | Bonsai Q2, all located project sessions | GPT implementation | Claude implementation |
+| Measure | Bonsai Q2 | GPT / Codex | Claude Fable 5.1 |
 | --- | ---: | ---: | ---: |
-| Development time | **10h 05m 03.351s active turn time** | 13m 28s reported | 41m reported |
-| Uncached input | 2,801,131 | 57,053 | Approximately 1.0k reported |
-| Output | 575,710 | 24,819 | Approximately 197.6k reported |
-| Uncached input + output | **3,376,841** | **81,872** | Approximately 198.6k, excluding cache writes |
-| Cached input / cache reads | 77,600,825 | 1,020,032 | Approximately 5.7m |
-| Cache writes | 0 reported | Not separately reported | Approximately 289.4k |
-| Total including cached input | **80,977,666** | **1,101,904** | Not presented as an exact comparable total |
+| Initial implementation turn | 5h 12m 22.594s; incomplete | **13m 28.064s** | **41m 43.046s** |
+| Recorded active turn time, including project follow-ups | **10h 05m 03.351s** | **14m 10.390s** | **41m 59.079s** |
+| New input, including cache creation | 2,801,131 | 114,746 | 550,796 |
+| Output | 575,710 | 25,177 | 198,074 |
+| New input + output | **3,376,841** | **139,923** | **748,870** |
+| Cached input / cache reads | 77,600,825 | 1,111,808 | 6,303,779 |
+| Cache creation, already included in new input | 0 recorded | 0 recorded | 549,636 |
+| Total including cache reads and creation | **80,977,666** | **1,251,731** | **7,052,649** |
 
-Bonsai's figures were reconstructed from its private local Codex records, checked against unique response usage records, and include follow-up debugging. GPT and Claude figures are taken from their existing development READMEs; their original implementation sessions were not independently audited here. Claude's rounded cache-write accounting differs from the Codex figures. These numbers are not a price, energy, throughput, or hardware-normalized comparison.
+All three sets of figures now come from the original local session records. Totals cover the located project sessions and their later README updates; GPT also includes a 12.500-second aborted start. The current comparison audit, screenshots, publication work and separate audio-recovery session are excluded. The initial implementation row isolates the application-building turn from these follow-ups.
+
+For Codex, new input is recorded input minus cached input; cumulative usage is cross-checked against unique response records. Claude uses the final saved per-model `cost-state` counters. Its cache creation is separate from ordinary input, so **1,160 ordinary input + 549,636 cache-creation tokens = 550,796 new input tokens**. This normalization makes the totals additive without counting cache writes twice. Claude's session also records **1,027 auxiliary-model tokens** (1,010 input and 17 output), excluded from the Fable column; all models combined total **7,053,676**. The saved Claude counters and transcript-message-only sums differ, as documented in its [accounting method](pulse-vis-claude/README.md#accounting-method).
+
+Times use recorded turn durations, including failed/interrupted turns where present, rather than gaps between user messages or a rounded README claim. See the [GPT session breakdown](pulse-vis-gpt/README.md#verified-development-record), [Claude development record](pulse-vis-claude/README.md#development-record), and [Bonsai accounting](pulse-vis-bonsai/README.md#development-accounting). These are exact recorded counts and durations, not estimates or independently verified provider invoices. They are not a price, energy, throughput, or hardware-normalized comparison.
 
 Bonsai's active time includes tool execution, waiting within turns, failed turns and interrupted turns. The calendar span was **15h 51m 40.128s**, including gaps between turns. The earlier **5h 12m 22s** README statement described only the initial attempt and incorrectly framed it as successful completion. See the [Bonsai accounting methodology](pulse-vis-bonsai/README.md#development-accounting) for the session breakdown and limitations.
 
@@ -120,6 +125,6 @@ The experiment does not isolate whether quantization, the base model, context ma
 
 ## Evidence and repository scope
 
-This audit used the saved source trees, bundled API headers, existing READMEs, Bonsai's project-related session records and the separate recovery record. On 2026-09-22, `cargo test --offline --locked` passed in all three directories. Live audio and interactive UI tests were not rerun during the initial documentation audit; historical runtime checks are identified as such above. In the subsequent screenshot capture, both working versions were run against a live synthetic test stream and switched between the modes shown above.
+This audit used the saved source trees, bundled API headers, existing READMEs, all three implementations' project-related session records and the separate recovery record. On 2026-09-22, `cargo test --offline --locked` passed in all three directories. Live audio and interactive UI tests were not rerun during the initial documentation audit; historical runtime checks are identified as such above. In the subsequent screenshot capture, both working versions were run against a live synthetic test stream and switched between the modes shown above.
 
 Raw logs, personal paths, usernames, device identifiers and session identifiers are omitted. The source code was preserved. Root and per-project ignore rules exclude build output, native binaries, temporary files, caches and logs, while preserving Cargo lockfiles, build scripts, source headers and example configuration. Nested Git metadata was removed so these versions can be tracked together in a parent repository.

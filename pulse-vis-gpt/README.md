@@ -98,6 +98,24 @@ The live test creates a temporary null sink and two synthetic playback applicati
 
 PulseAudio interface reference: [per-stream monitors](https://wiki.freedesktop.org/www/Software/PulseAudio/Documentation/Developer/Clients/WritingVolumeControlUIs/). Rendering uses [Ratatui](https://ratatui.rs/) and analysis uses [RustFFT](https://docs.rs/rustfft/latest/rustfft/).
 
-This application was created in 13 minutes and 28 seconds using the gpt-6-astra model with high reasoning effort.
+## Verified development record
 
-Token usage: total=81,872 input=57,053 (+ 1,020,032 cached) output=24,819 (reasoning 2,665)
+The original Codex sessions identify **gpt-6-astra with high reasoning effort**. The successful application-building turn took **13m 28.064s**. Across both located project sessions, including an earlier interrupted start and two later README updates, recorded active turn time was **14m 10.390s**.
+
+The [original application prompt](../PROMPT.md) is preserved with the comparison.
+
+| Recorded turn | Duration | New input | Cached input | Output | Total including cache |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Interrupted initial start | 12.500s | 3,661 | 12,800 | 177 | 16,638 |
+| Successful implementation | 13m 28.064s | 56,003 | 889,088 | 24,565 | 969,656 |
+| README timing update | 11.543s | 1,050 | 130,944 | 254 | 132,248 |
+| README token-usage update | 18.283s | 54,032 | 78,976 | 181 | 133,189 |
+| **All project turns** | **14m 10.390s** | **114,746** | **1,111,808** | **25,177** | **1,251,731** |
+
+New input plus output totals **139,923 tokens**. The recorded **2,665 reasoning-output tokens** are a subset of output, not an additional charge to add to that total. Cache-write input is recorded as zero.
+
+### Accounting method
+
+The final cumulative `total_token_usage` from each session was checked against the sum of `token_usage_record.payload.usage`, deduplicated by response ID. The two methods agree. Recorded input includes cache reads, so new input is input minus cached input. Turn durations come from `task_complete` and `turn_aborted` events; idle gaps are excluded.
+
+The old README's 81,872-token line was supplied during a later documentation request and is superseded by this complete breakdown. This audit, screenshot capture, repository publishing and the separate session that repaired the Bonsai-related desktop audio incident are excluded. Raw logs, personal paths and session identifiers are not published.
