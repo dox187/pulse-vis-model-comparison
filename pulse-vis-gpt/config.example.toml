@@ -1,0 +1,19 @@
+# Copy to ~/.config/pulse-vis/config.toml or pass --config PATH.
+mode = "spectrum" # spectrum, waveform, spectrogram, vectorscope, vu, radial
+quality = "high" # low (1024), medium (2048), high (4096), ultra (8192)
+fps = 60 # 10..144
+sensitivity = 1.0 # 0.05..20; visualization gain only
+smoothing = 0.65 # 0..0.98; higher = slower response
+min_frequency = 30.0 # >= 20 Hz
+max_frequency = 18000.0 # <= 24000 Hz
+floor_db = -65.0 # -120..-10 dB
+auto_gain = true
+bar_width = 2 # 1..8 cells
+bar_gap = 1 # 0..4 cells
+show_peaks = true
+theme = "aurora" # aurora, fire, ocean, mono, custom
+background = "#090E1A"
+foreground = "#D8E2F0"
+gradient = ["#45E0B8", "#55A7FF", "#C58CFF"] # used by custom theme
+apps = [] # e.g. ["Brave", "Spotify"]; empty = output monitor(s)
+# sink = "alsa_output.pci-0000_0c_00.4.analog-stereo" # omit for all outputs

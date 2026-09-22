@@ -1,0 +1,94 @@
+# pulse-vis-claude configuration
+# Default location: ~/.config/pulse-vis-claude/config.toml   (override with --config PATH)
+# Every key is optional; anything missing falls back to the value shown here.
+# Press `w` inside the program to write the current settings to this file.
+
+[display]
+# Start-up mode: bars | mirror | wave | vu | spectrogram | lissajous | radial
+mode = "bars"
+# Target frame rate (10-240)
+fps = 60
+# mono | stereo  (stereo: left channel grows leftwards from the centre, right channel rightwards)
+channels = "stereo"
+# Falling peak markers above the bars
+peaks = true
+peak_hold_ms = 250.0
+# Peak fall acceleration, in screen heights per second squared
+peak_gravity = 3.0
+# Status bar at the bottom
+status_bar = true
+# Oscilloscope drawing style: line | filled | dots
+wave_style = "line"
+# Time window of the oscilloscope and of the vectorscope, in milliseconds
+wave_ms = 40.0
+xy_ms = 40.0
+# Spectrogram scroll direction: up | down | left
+spectrogram_direction = "up"
+# Rotate the vectorscope by 45 degrees (mid/side goniometer view)
+lissajous_rotate = true
+# Dot marker used by the canvas based modes: braille | octant | half-block | block | dot
+marker = "braille"
+# Number of bars in radial mode (0 = automatic)
+radial_bars = 0
+# Use 24-bit colours; set to false on terminals limited to 256 colours
+truecolor = true
+
+[audio]
+# What to capture:
+#   "all"             everything that is played on the default output
+#   "app:Firefox"     one application only (case-insensitive substring of its name)
+#   "sink:NAME"       everything that is played on a specific output
+#   "source:NAME"     a capture device such as a microphone
+source = "all"
+# Capture sample rate; the server resamples when needed
+sample_rate = 44100
+# Capture fragment length in milliseconds (lower = less latency, more wake-ups)
+buffer_ms = 10
+# PulseAudio server address ("" = default)
+server = ""
+
+[analysis]
+# FFT window length in samples (power of two, 256-32768). Larger = finer bass resolution, more latency.
+fft_size = 4096
+freq_min = 40.0
+freq_max = 16000.0
+# Number of bars (0 = as many as fit on screen)
+bars = 0
+bar_width = 2
+bar_gap = 1
+# Temporal smoothing time constants
+attack_ms = 20.0
+decay_ms = 180.0
+# Neighbour smoothing ("monstercat" style); 1.0 disables it, 1.3-2.0 is typical
+monstercat = 1.5
+# Spectral tilt in dB per octave relative to 1 kHz (music has less energy at high frequencies)
+tilt_db_per_oct = 2.5
+# Bar height scale: log | linear | sqrt
+scale = "log"
+# How FFT bins are folded into one bar: peak | average
+band_mode = "peak"
+
+[sensitivity]
+# Manual gain in dB (the + and - keys change it)
+gain_db = 0.0
+# Adapt the gain automatically to the loudest recent band
+auto_gain = true
+# Displayed dynamic range in dB (log scale)
+dynamic_range_db = 50.0
+# How fast auto gain recovers after a loud passage
+auto_gain_release_db_per_s = 4.0
+# Bands quieter than this (dBFS) are treated as silence
+noise_floor_db = -90.0
+
+[colors]
+# Preset name (see --list-themes) or "custom"
+theme = "spectrum"
+# Custom gradient, low -> high, used when theme = "custom"
+gradient = ["#00e5ff", "#7c4dff", "#ff4081"]
+# Gradient mapping: vertical (by height) | horizontal (by frequency) | level (by loudness) | solid
+direction = "vertical"
+# Background: "default" keeps the terminal background, or give a hex colour such as "#000000"
+background = "default"
+peak = "#ffffff"
+text = "#c8c8c8"
+accent = "#7c4dff"

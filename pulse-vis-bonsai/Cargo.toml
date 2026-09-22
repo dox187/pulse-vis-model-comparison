@@ -1,0 +1,15 @@
+[package]
+name = "pulse-viz"
+version = "0.1.0"
+edition = "2021"
+description = "PulseAudio TUI audio visualizer"
+
+[dependencies]
+crossterm = "0.29.0"
+termios = "0.3"
+libc = "0.2"
+serde = { version = "1", features = ["derive"] }
+toml = "0.8"
+
+[build-dependencies]
+cc = "1"

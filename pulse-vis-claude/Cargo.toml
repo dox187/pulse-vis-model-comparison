@@ -1,0 +1,20 @@
+[package]
+name = "pulse-vis-claude"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+anyhow = "1"
+clap = { version = "4", features = ["derive"] }
+dirs = "7"
+libpulse-binding = "2.30"
+ratatui = "0.30"
+realfft = "3.5"
+serde = { version = "1", features = ["derive"] }
+toml = "1"
+
+[profile.release]
+opt-level = 3
+lto = "thin"
+codegen-units = 1
+strip = true
